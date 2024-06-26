@@ -3,13 +3,9 @@
 const express = require("express");
 const path = require("path");
 
-const rootDir = require("../util/path");
-
 const router = express.Router();
 //router here is used to create a mini express app that can be used in the main express app
-
-const products=[];
-
+const adminController = require("../controllers/admin");
 
 // router.get("/add-product", (request, response, next) => {
 //   // response.send(
@@ -18,24 +14,13 @@ const products=[];
 //   response.sendFile(path.join(rootDir, "views", "add-product.html"));
 // });
 
-router.get("/add-product", (req, res, next) => {
-  res.render("add-product", {
-    pageTitle: "Add Product",
-    path: "/admin/add-product",
-    formsCSS: true,
-    productCSS: true,
-    activeAddProduct: true,
-  });
-});
+router.get("/add-product", adminController.getAddProduct); //not implemented as a function , we just pass a reference to it over here
 
-router.post("/add-product", (request, response, next) => {
-  console.log(request.body);
-  products.push({title: request.body.title,
-    price: request.body.price,
-    description: request.body.description,
-  })
-  response.redirect("/");
-});
+router.post("/add-product", adminController.postAllProducts);
+
+router.get("/products", adminController.getProducts); //for seeing products through the admin login
+
 //adminData is all the exports from this file
-exports.routes=router;
-exports.products=products;
+exports.routes = router;
+// exports.products=products;
+//no need to export products from here as that code is no longer here
