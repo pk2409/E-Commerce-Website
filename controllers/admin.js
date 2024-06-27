@@ -11,12 +11,12 @@ exports.getAddProduct = (request, response, next) => {
 };
 
 exports.postAllProducts = (request, response, next) => {
-  const product = new Product(
-    request.body.title,
-    request.body.price,
-    request.body.description
-  );
-  product.save();
+    const title = request.body.title;
+    const price=  request.body.price;
+    const description = request.body.description;
+    const imageUrl= request.body.imageUrl;
+    const product = new Product(title, imageUrl, price, description)
+    product.save();
   // console.log(request.body);
   // products.push({
   //   title: request.body.title,

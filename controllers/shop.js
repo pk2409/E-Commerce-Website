@@ -10,9 +10,9 @@ exports.getProducts = (request, response, next) => {
   const products = Product.fetchAll();
 
   response.render("shop/product-list", {
-    path: "/",
+    path: "/products",
     prods: products,
-    pageTitle: "Shop",
+    pageTitle: "Products List",
   });
 };
 
@@ -30,6 +30,13 @@ exports.getCart = (request, response, next) => {
   response.render("shop/cart", {
     path: "/cart",
     pageTitle: "Your Cart",
+  });
+};
+
+exports.getOrders = (request, response, next) => {
+  response.render("shop/orders", {
+    path: "/orders",
+    pageTitle: "Your Orders",
   });
 };
 
