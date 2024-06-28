@@ -5,6 +5,8 @@ const app = express();
 
 const errorController = require("./controllers/error");
 
+const sequelize = require("./util/db");
+
 app.set("view engine", "ejs"); //allows to set any values globally on our express application
 //views-engine tells which engine to use to render the views
 //views tells where we can find those views
@@ -28,6 +30,15 @@ app.use((req, res, next) => {
   res.locals.path = req.path;
   next();
 });
+
+sequelize
+  .sync()
+  .then((result) => {
+    // console.log(result);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 app.listen(3000);
 

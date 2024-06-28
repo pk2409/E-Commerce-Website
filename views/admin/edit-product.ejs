@@ -29,13 +29,13 @@
                             value="<% if(editing) {%><%=product.description%><%} %>"></textarea>
                     </div>
                     <% if(editing){%>
-                        <input type="hidden" value="<%=product.Id%>" name="product.Id">
-                    <%}%>
+                        <input type="hidden" value="<%=product.id%>" name="productId">
+                        <%}%>
 
 
-                    <button class="btn" type="submit">
-                        <% if (editing){%>Update Product<%} else{%>Add Product<%}%>
-                    </button>
+                            <button class="btn" type="submit">
+                                <% if (editing){%>Update Product<%} else{%>Add Product<%}%>
+                            </button>
                 </form>
             </main>
             <%- include('../includes/end.ejs') %>

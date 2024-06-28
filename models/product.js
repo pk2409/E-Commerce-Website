@@ -1,71 +1,69 @@
-//represents a single  entity
-const fs = require("fs");
-const path = require("path");
-const products = [];
+// //represents a single  entity
+// // const fs = require("fs");
+// // const path = require("path");
+// const products = [];
+// const db = require("../util/db");
 
-//import cart model in product model to implement deletion of products
-const Cart=require('./cart');	
+// //import cart model in product model to implement deletion of products
+// const Cart = require("./cart");
 
-module.exports = class Product {
-  constructor(id,title, imageUrl, price, description) { //if id already exists(in case of update) or if it doesnt exist and it is null initially , then math.random creates an id for us
-    this.id=id;
-    this.title = title;
-    this.imageUrl = imageUrl;
-    this.price = price;
-    this.description = description;
-  }
+// module.exports = class Product {
+//   constructor(id, title, imageUrl, price, description) {
+//     //if id already exists(in case of update) or if it doesnt exist and it is null initially , then math.random creates an id for us
+//     this.id = id;
+//     this.title = title;
+//     this.imageUrl = imageUrl;
+//     this.price = price;
+//     this.description = description;
+//   }
 
-  save() {
-    // const p = path.join(path.dirname(require.main.filename),'data');
+//   save() {
+//     // const p = path.join(path.dirname(require.main.filename),'data');
+//     return db.execute(
+//       "INSERT INTO products (title,price,imageUrl,description) VALUES (?,?,?,?)",
+//       [this.title, this.price, this.imageUrl, this.description]
+//     );
+//   }
 
-    getProductsFromFile(products => {
-      if (this.id) {
-        const existingProductIndex=products.findIndex(prod=>prod.id===this.id);
-        const updatedProducts=[...products];
-        updatedProducts[existingProductIndex]=this;
-        fs.writeFile(p, JSON.stringify(products), (err) => {
-          console.log(err);
-        });
-      }else{
-        this.id = Math.random().toString(); //as a dummy value
+//   static deleteById(id) {}
 
-        products.push(this);
-        fs.writeFile(p, JSON.stringify(products), (err) => {
-          console.log(err);
-        });
+//   static fetchAll() {
+//     return db.execute("SELECT * FROM products");
+//   }
 
-      }
-      
-    });
-    products.push(this);
-  }
+//   static findById(id) {
+//     return db.execute("SELECT * FROM products WHERE products.id= ?", [id]); //to check if it is the id that we are getting as parameter here
+//   }
+// };
 
+const Sequelize = require("sequelize"); //the Sequelize library
 
-  static deleteById(id){
-    getProductsFromFile(products=>{
-      const product=products.find(prod=>prod.id===id); //get product info which can be used to access the product price
-      const updatedProducts = products.filter(prod=> prod.id!==id);//if this condition is true, it will be kept in the array and the rest will be filtered out
-      fs.writeFile(p,JSON.stringify(updatedProducts),err=>{
-        if(!err){
-          //also remove it from the cart
-          Cart.deleteProduct(id,this.price);
+const sequelize = require("../util/db"); //the instance of Sequelize that we import from the connection we made in db.js
 
-        }
-      })
-    });
+//defining model managed by sequelize
+const Product = sequelize.define("product", {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+  title: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  price: {
+    type: Sequelize.DOUBLE,
+    allowNull: false,
+  },
+  imageUrl: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+});
 
-  }
-
-  static fetchAll() {
-    return products; //the products array is returned
-  }
-
-  static findById(id,cb){
-    getProductsFromFile(products=>{
-      const product = products.find(p=> p.id===id);//if this condition is true, the product that we are currently accessing will be returned back
-      cb(product);
-    })
-  }
-};
-
-
+module.exports = Product;

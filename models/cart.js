@@ -6,13 +6,13 @@ const p = path.join(path.dirname(require.main.filename), "data", "cart.json");
 module.exports = class Cart {
   static addProduct(id, price) {
     //fetch the previous cart
-    fs.readFile(p, (err, fileContent) => {
-      let cart = { products: [], totalPrice: 0 };
-      if (!err) {
-        //cart already exists
-        cart = JSON.parse(fileContent);
-      }
-    });
+    // fs.readFile(p, (err, fileContent) => {
+    //   let cart = { products: [], totalPrice: 0 };
+    //   if (!err) {
+    //     //cart already exists
+    //     cart = JSON.parse(fileContent);
+    //   }
+    // });
     //see if the product is already there
     const existingProductIndex = cart.products.findIndex(
       (prod) => prod.id === id
@@ -59,13 +59,13 @@ module.exports = class Cart {
   }
 
   static getCart(cb) {
-    fs.readFile(p, (err, fileContent) => {
-      const cart = JSON.parse(fileContent);
-      if (err) {
-        cb(null);
-      } else {
-        cb(cart);
-      }
-    });
+    // fs.readFile(p, (err, fileContent) => {
+    //   const cart = JSON.parse(fileContent);
+    //   if (err) {
+    //     cb(null);
+    //   } else {
+    //     cb(cart);
+    //   }
+    // });
   }
 };

@@ -19,17 +19,32 @@ exports.getEditProduct = (request, response, next) => {
     return response.redirect("/");
   }
   const prodId = request.params.productId;
-  Product.findById(prodId, (product) => {
-    if (!product) {
-      return response.redirect("/");
-    }
-    response.render("admin/edit-product", {
-      path: "/admin/edit-product",
-      pageTitle: "Edit Product",
-      editing: editMode, //if this is the product id to be edited
-      product: product,
+  Product.findByPk(prodId)
+    .then((product) => {
+      if (!product) {
+        return response.redirect("/");
+      }
+      response.render("admin/edit-product", {
+        path: "/admin/edit-product",
+        pageTitle: "Edit Product",
+        editing: editMode, //if this is the product id to be edited
+        product: product,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
     });
-  });
+  // Product.findById(prodId, (product) => {
+  //   if (!product) {
+  //     return response.redirect("/");
+  //   }
+  //   response.render("admin/edit-product", {
+  //     path: "/admin/edit-product",
+  //     pageTitle: "Edit Product",
+  //     editing: editMode, //if this is the product id to be edited
+  //     product: product,
+  //   });
+  // });
 };
 
 exports.postEditProduct = (request, response, next) => {
@@ -57,28 +72,61 @@ exports.postAllProducts = (request, response, next) => {
   const description = request.body.description;
   const imageUrl = request.body.imageUrl;
   const product = new Product(null, title, imageUrl, price, description);
-  product.save();
+  Product.create({
+    title: title,
+    price: price,
+    imageUrl: imageUrl,
+    description: description,
+  })
+    .then((result) => {
+      console.log("Product Created");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+  // -------------------------------------> CODE FOR USING MYSQL WITHOUT SEQUELIZE <----------------------------------------------
+  // product
+  //   .save()
+  //   .then(() => {
+  //     //only redirect once the insert is completed
+  //     response.redirect("/");
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
   // console.log(request.body);
   // products.push({
   //   title: request.body.title,
   //   price: request.body.price,
   //   description: request.body.description,
   // });
-  response.redirect("/");
+  // response.redirect("/");
 };
 
 exports.getProducts = (request, response, next) => {
-  const products = Product.fetchAll();
+  // const products = Product.fetchAll();
 
-  response.render("admin/products", {
-    path: "/admin/products",
-    prods: products,
-    pageTitle: "Admin Products",
-  });
+  // response.render("admin/products", {
+  //   path: "/admin/products",
+  //   prods: products,
+  //   pageTitle: "Admin Products",
+  // });
+  Product.findAll()
+    .then((products) => {
+      response.render("admin/products", {
+        prods: products,
+        pageTitle: "Admin Products",
+        path: "/admin/products",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
-exports.postDeleteProduct=(request,response,next)=>{
-  const prodId=request.body.productId;
+exports.postDeleteProduct = (request, response, next) => {
+  const prodId = request.body.productId;
   Product.deleteById(prodId);
-  response.redirect('/admin/products');
-}
+  response.redirect("/admin/products");
+};
