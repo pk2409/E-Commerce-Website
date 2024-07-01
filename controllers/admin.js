@@ -19,8 +19,11 @@ exports.getEditProduct = (request, response, next) => {
     return response.redirect("/");
   }
   const prodId = request.params.productId;
-  Product.findByPk(prodId)
-    .then((product) => {
+  request.user
+    .getProducts({ where: { id: prodId } }) //this will only fetch the products that belong to the user
+    // Product.findByPk(prodId)
+    .then((products) => {
+      const product = products[0];
       if (!product) {
         return response.redirect("/");
       }
@@ -90,16 +93,17 @@ exports.postAllProducts = (request, response, next) => {
   const price = request.body.price;
   const description = request.body.description;
   const imageUrl = request.body.imageUrl;
-  const product = new Product(null, title, imageUrl, price, description);
-  Product.create({
-    title: title,
-    price: price,
-    imageUrl: imageUrl,
-    description: description,
-  })
+  request.user // connecting the user to this particular product without explicitly making it a field
+    .createProduct({
+      title: title,
+      price: price,
+      imageUrl: imageUrl,
+      description: description,
+      // userId: request.user.id,
+    })
     .then((result) => {
       console.log("Product Created");
-      response.redirect("/admin/products")
+      response.redirect("/admin/products");
     })
     .catch((err) => {
       console.log(err);
@@ -132,7 +136,9 @@ exports.getProducts = (request, response, next) => {
   //   prods: products,
   //   pageTitle: "Admin Products",
   // });
-  Product.findAll()
+  request.user
+    .getProducts()
+    // Product.findAll()
     .then((products) => {
       response.render("admin/products", {
         prods: products,
