@@ -185,9 +185,8 @@ exports.postCartDeleteProduct = (request, response, next) => {
     .then((result) => {
       response.redirect("/cart");
     })
-    .catch(err=>{
+    .catch((err) => {
       console.log(err);
-    
     });
   // product.findById(prodId, (product) => {
   //   Cart.deleteProduct(prodId, product.price);
@@ -207,4 +206,32 @@ exports.getCheckout = (request, response, next) => {
     path: "/checkout",
     pageTitle: "Checkout",
   });
+};
+
+exports.postOrder = (request, response, next) => {
+  request.user
+    .getCart()
+    .then((cart) => {
+      return cart.getProducts();
+    })
+    .then((products) => {
+      //create order for a particular user
+      return request.user
+        .createOrder()
+        .then((order) => {
+          return order.addProducts(
+            products.map((product) => {
+              product.orderItem = { quantity: product.cartItem.quantity };
+              return product;
+            })
+          );
+        })
+        .catch((err) => console.log(err))
+        .then((result) => {
+          response.redirect("/orders");
+        });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
