@@ -26,10 +26,10 @@ app.use(shopRoutes); //not as a function but as an object , it will automaticall
 //for an error page to handle all incoming requests not already handled by the code given above
 app.use(errorController.geterror);
 
-app.use((req, res, next) => {
-  res.locals.path = req.path;
-  next();
-});
+// app.use((req, res, next) => {
+//   res.locals.path = req.path;
+//   next();
+// });
 
 sequelize
   .sync()

@@ -20,7 +20,7 @@ router.post("/add-product", adminController.postAllProducts);
 
 router.get("/products", adminController.getProducts); //for seeing products through the admin login
 
-router.get("/edit-product/:productid", adminController.getEditProduct);
+router.get("/edit-product/:productId", adminController.getEditProduct);
 
 router.post("/edit-product", adminController.postEditProduct);
 
