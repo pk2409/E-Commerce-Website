@@ -195,10 +195,19 @@ exports.postCartDeleteProduct = (request, response, next) => {
 };
 
 exports.getOrders = (request, response, next) => {
-  response.render("shop/orders", {
-    path: "/orders",
-    pageTitle: "Your Orders",
-  });
+  request.user
+    .getOrders({ include: ["products"] })
+    .then((orders) => {
+      console.log(orders);
+      response.render("shop/orders", {
+        path: "/orders",
+        pageTitle: "Your Orders",
+        order: orders,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 exports.getCheckout = (request, response, next) => {
@@ -208,14 +217,53 @@ exports.getCheckout = (request, response, next) => {
   });
 };
 
-exports.postOrder = (request, response, next) => {
+// exports.postOrder = (request, response, next) => {
+//   let fetchedCart;
+//   console.log("working here");
+//   request.user
+//     .getCart()
+//     .then((cart) => {
+//       fetchedCart = cart;
+//       return cart.getProducts();
+//     })
+//     .then((products) => {
+//       console.log("THIS WORKS");
+//       //create order for a particular user
+//       return request.user
+//         .createOrder()
+//         .then((order) => {
+//           return order.addProducts(
+//             products.map((product) => {
+//               product.orderItem = { quantity: product.cartItem.quantity };
+//               console.log(product);
+//               return product;
+//             })
+//           );
+//         })
+//         .catch((err) => console.log(err));
+//     })
+//     .then((result) => {
+//       return fetchedCart.setProducts(null);
+//     })
+//     .then(() => {
+//       response.redirect("/orders");
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+// };
+
+exports.postOrders = (request, response, next) => {
+  let fetchedCart;
+  console.log("hello");
   request.user
     .getCart()
     .then((cart) => {
-      return cart.getProducts();
+      fetchedCart = cart;
+      return fetchedCart.getProducts();
     })
     .then((products) => {
-      //create order for a particular user
+      console.log(products);
       return request.user
         .createOrder()
         .then((order) => {
@@ -226,12 +274,13 @@ exports.postOrder = (request, response, next) => {
             })
           );
         })
-        .catch((err) => console.log(err))
-        .then((result) => {
-          response.redirect("/orders");
-        });
+        .catch((err) => console.log(err));
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .then((result) => {
+      return fetchedCart.setProducts(null);
+    })
+    .then((result) => {
+      response.redirect("/orders");
+    })
+    .catch((err) => console.log(err));
 };
